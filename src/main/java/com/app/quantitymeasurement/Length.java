@@ -2,7 +2,7 @@ package com.app.quantitymeasurement;
 import java.util.Objects;
 public class Length 
 {
-	  private final double value;
+	 private final double value;
 	    private final LengthUnit unit;
 
 	    public Length(double value, LengthUnit unit) 
@@ -26,7 +26,10 @@ public class Length
 	        {
 	            return false;
 	        }
-	        return Double.compare(this.convertToBaseUnit(),other.convertToBaseUnit())== 0;
+	        return Double.compare(
+	                this.convertToBaseUnit(),
+	                other.convertToBaseUnit()
+	        ) == 0;
 	    }
 
 	    @Override
@@ -41,19 +44,19 @@ public class Length
 
 	        Length other = (Length) obj;
 
-	        return Double.compare(this.convertToBaseUnit(),other.convertToBaseUnit()) == 0;
+	        return Double.compare(
+	                this.convertToBaseUnit(),
+	                other.convertToBaseUnit()
+	        ) == 0;
 	    }
 
 	    @Override
-	    public int hashCode() 
-	    {
+	    public int hashCode() {
 	        return Objects.hash(convertToBaseUnit());
 	    }
-
+	    
 	    @Override
-	    public String toString() 
-	    {
+	    public String toString() {
 	        return "Quantity(" + value + ", " + unit + ")";
 	    }
-	
-}
+	}
