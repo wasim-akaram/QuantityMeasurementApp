@@ -2,61 +2,107 @@ package com.app.quantitymeasurement;
 import java.util.Objects;
 public class Length 
 {
-	 private final double value;
-	    private final LengthUnit unit;
+	private final double value;
+    private final LengthUnit unit;
 
-	    public Length(double value, LengthUnit unit) 
-	    {
-	        if (unit == null) 
-	        {
-	            throw new IllegalArgumentException("Unit cannot be null");
-	        }
-	        this.value = value;
-	        this.unit = unit;
-	    }
+    public Length(double value, LengthUnit unit)
+    {
+        validateValue(value);
+        validateUnit(unit);
+        this.value = value;
+        this.unit = unit;
+    }
 
-	    private double convertToBaseUnit() 
-	    {
-	        return this.value * unit.getConversionFactor();
-	    }
 
-	    public boolean compare(Length other) 
-	    {
-	        if (other == null) 
-	        {
-	            return false;
-	        }
-	        return Double.compare(
-	                this.convertToBaseUnit(),
-	                other.convertToBaseUnit()
-	        ) == 0;
-	    }
 
-	    @Override
-	    public boolean equals(Object obj) 
-	    {
 
-	        if (this == obj)
-	            return true;
+    // Conversion Methods
+    public static double convert(double value, LengthUnit source, LengthUnit target) 
+    {
 
-	        if (obj == null || getClass() != obj.getClass())
-	            return false;
+        validateValue(value);
+        validateUnit(source);
+        validateUnit(target);
 
-	        Length other = (Length) obj;
+        if (source == target) 
+        {
+            return value;
+        }
 
-	        return Double.compare(
-	                this.convertToBaseUnit(),
-	                other.convertToBaseUnit()
-	        ) == 0;
-	    }
+        return value * (source.getConversionFactor() / target.getConversionFactor());
+    }
 
-	    @Override
-	    public int hashCode() {
-	        return Objects.hash(convertToBaseUnit());
-	    }
-	    
-	    @Override
-	    public String toString() {
-	        return "Quantity(" + value + ", " + unit + ")";
-	    }
-	}
+    public Length convertTo(LengthUnit targetUnit) 
+    {
+        double convertedValue = convert(this.value, this.unit, targetUnit);
+        return new Length(convertedValue, targetUnit);
+    }
+
+
+
+    // Equality and Comparison Methods
+    private double convertToBaseUnit() 
+    {
+        return this.value * unit.getConversionFactor();
+    }
+
+    public boolean compare(Length other) 
+    {
+        if (other == null) 
+        {
+            return false;
+        }
+        return Double.compare(
+                this.convertToBaseUnit(),
+                other.convertToBaseUnit()
+        ) == 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) 
+    {
+
+        if (this == obj)
+            return true;
+
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+
+        Length other = (Length) obj;
+
+        return Double.compare(
+                this.convertToBaseUnit(),
+                other.convertToBaseUnit()
+        ) == 0;
+    }
+
+    @Override
+    public int hashCode() 
+    {
+        return Objects.hash(convertToBaseUnit());
+    }
+    
+    @Override
+    public String toString() 
+    {
+        return "Quantity(" + value + ", " + unit + ")";
+    }
+
+
+    // Validation Methods for Lengths 
+    private static void validateUnit(LengthUnit unit) 
+    {
+        if (unit == null) 
+        {
+            throw new IllegalArgumentException("Unit cannot be null");
+        }
+    }
+
+    private static void validateValue(double value) 
+    {
+        if (!Double.isFinite(value)) 
+        {
+            throw new IllegalArgumentException("Value must be finite");
+        }
+    }
+}
