@@ -1,13 +1,13 @@
-Quantity Measurement Application  
+# Quantity Measurement Application  
 
 > A Java-based application that demonstrates measurement equality comparison using object-oriented principles.
 ---
 
 
 
-UC1: Feet Measurement Equality  
+## UC1: Feet Measurement Equality  
 
-Description  
+### Description  
 
 > Checks equality of two numerical values in feet, handling null, type mismatch, and floating-point precision.  
 
