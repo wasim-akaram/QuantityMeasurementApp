@@ -1,6 +1,7 @@
 package com.app.quantitymeasurement;
 
 import java.util.Objects;
+
 import java.util.function.DoubleBinaryOperator;
 
 public final class Quantity<U extends IMeasurable> {

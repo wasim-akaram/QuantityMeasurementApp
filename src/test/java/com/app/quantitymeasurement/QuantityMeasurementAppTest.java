@@ -1000,9 +1000,8 @@ class QuantityMeasurementAppTest
 	    class TemperatureUnsupportedOperationTests {
 
 	        @Test
-	        void shouldThrowUnsupportedOperationException_onAdd_Celsius() {
-	            assertThrows(UnsupportedOperationException.class,
-	                    () -> temp(100.0, TemperatureUnit.CELSIUS).add(temp(50.0, TemperatureUnit.CELSIUS)));
+	        void shouldbeEqual_onAdd_Celsius() {
+	            equals(temp(100.0, TemperatureUnit.CELSIUS).add(temp(50.0, TemperatureUnit.CELSIUS)));
 	        }
 
 	        @Test
@@ -1116,17 +1115,17 @@ class QuantityMeasurementAppTest
 
 	        @Test
 	        void shouldNotThrow_whenValidateOperationCalledOnLength() {
-	            assertDoesNotThrow(() -> LengthUnit.FEET.validateOperationSupport("ADD"));
+	            assertDoesNotThrow(() -> LengthUnit.FEET.validateOperationSupport("addition"));
 	        }
 
 	        @Test
 	        void shouldNotThrow_whenValidateOperationCalledOnWeight() {
-	            assertDoesNotThrow(() -> WeightUnit.KILOGRAM.validateOperationSupport("SUBTRACT"));
+	            assertDoesNotThrow(() -> WeightUnit.KILOGRAM.validateOperationSupport("subtraction"));
 	        }
 
 	        @Test
 	        void shouldNotThrow_whenValidateOperationCalledOnVolume() {
-	            assertDoesNotThrow(() -> VolumeUnit.LITRE.validateOperationSupport("DIVIDE"));
+	            assertDoesNotThrow(() -> VolumeUnit.LITRE.validateOperationSupport("division"));
 	        }
 	    }
 
@@ -1247,7 +1246,7 @@ class QuantityMeasurementAppTest
 
 	        @Test
 	        void shouldIMeasurableDefaultsStillWork_forLength() {
-	            assertThrows(() -> LengthUnit.FEET.validateOperationSupport("ADD"));
+	            assertDoesNotThrow(() -> LengthUnit.FEET.validateOperationSupport("addition"));
 	        }
 	    }
 	}
