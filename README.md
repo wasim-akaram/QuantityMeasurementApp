@@ -1,0 +1,52 @@
+# Quantity Measurement Application  
+
+A Java-based application that demonstrates measurement equality comparison using object-oriented principles.  
+---  
+
+
+## UC1: Feet Measurement Equality  
+### Description  
+Checks equality of two numerical values in feet, handling null, type mismatch, and floating-point precision.  
+
+Flow  
+> Input two numerical values in feet.  
+> Validate inputs are numeric.  
+> Compare for equality → return true or false.  
+
+Key Concepts  
+> Override equals() using Double.compare() instead of ==  
+> private final field for immutability  
+> Null & type safety to prevent exceptions  
+---    
+
+
+
+## UC2: Feet and Inches Measurement Equality  
+### Description  
+Extends UC1 to support equality checks for both Feet and Inches independently using separate classes. Reduces main method dependency via static helper methods.  
+
+Flow  
+> Static method validates two feet values → compares equality.  
+> Static method validates two inches values → compares equality.  
+> Returns true / false for each comparison.  
+
+Key Concepts  
+> Separate Inches class mirroring Feet (same equality logic)  
+> Static methods for Feet and Inches equality checks  
+> Violates DRY principle  
+---
+
+
+## UC3: Generic Quantity Class (DRY Principle)  
+### Description  
+Refactors Feet and Inches into a single QuantityLength class using a LengthUnit enum. Eliminates code duplication and supports cross-unit equality (e.g., 1 foot == 12 inches).  
+ 
+Flow  
+> Input value + unit type → validate.  
+> Convert both values to base unit (feet).  
+> Compare converted values → return true / false.  
+
+Key Concepts  
+> LengthUnit enum with conversion factors  
+> Single class handles all unit types (DRY)  
+> Cross-unit equality via base unit normalization  
