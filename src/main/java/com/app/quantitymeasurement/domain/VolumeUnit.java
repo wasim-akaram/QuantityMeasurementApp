@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 public enum VolumeUnit implements IMeasurable {
 
 	 LITRE(1.0),
@@ -7,29 +7,40 @@ public enum VolumeUnit implements IMeasurable {
 
 	    private final double conversionFactor; 
 
-	    VolumeUnit(double conversionFactor) {
+	    VolumeUnit(double conversionFactor) 
+	    {
 	        this.conversionFactor = conversionFactor;
 	    }
 
 	    @Override
-	    public double convertToBaseUnit(double value) {
+	    public double convertToBaseUnit(double value)
+	    {
 	        return value * conversionFactor;
 	    }
 
 	    @Override
-	    public double convertFromBaseUnit(double baseValue) {
+	    public double convertFromBaseUnit(double baseValue) 
+	    {
 	        return baseValue / conversionFactor;
 	    }
 
 	    @Override
-	    public String getUnitName() {
+	    public String getUnitName() 
+	    {
 	        return this.name();
 	    }
 
 	    
 	    
-	    public double getConversionFactor() {
+	    public double getConversionFactor() 
+	    {
 	        return conversionFactor;
+	    }
+	    
+	    @Override
+	    public MeasurementType getMeasurementType() 
+	    {
+	        return MeasurementType.VOLUME;
 	    }
 
 	}

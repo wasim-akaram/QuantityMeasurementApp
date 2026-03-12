@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 
 import java.util.Objects;
 
@@ -75,9 +75,9 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     // Core arithmetic helper — the single source of truth for conversion and computation.
-    private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+    private double performBaseArithmetic(Quantity<?> quantity2, ArithmeticOperation operation) {
         double base1 = this.unit.convertToBaseUnit(this.value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+        double base2 = quantity2.unit.convertToBaseUnit(quantity2.value);
         if (operation == ArithmeticOperation.DIVIDE && base2 == 0.0) {
             throw new ArithmeticException("Division by zero: divisor quantity has a base value of zero");
         }
@@ -86,22 +86,22 @@ public final class Quantity<U extends IMeasurable> {
     
 
     // Conversion
-    public Quantity<U> convertTo(U targetUnit) {
-        if (targetUnit == null) {
+    public Quantity<U> convertTo(U target) {
+        if (target == null) {
             throw new IllegalArgumentException("Target unit cannot be null");
         }
-        if (this.unit == targetUnit) {
+        if (this.unit == target) {
             return this;
         }
         double baseValue = unit.convertToBaseUnit(value);
-        double convertedValue = round(targetUnit.convertFromBaseUnit(baseValue));
-        return new Quantity<>(convertedValue, targetUnit);
+        double convertedValue = round(target.convertFromBaseUnit(baseValue));
+        return new Quantity<>(convertedValue, target);
     }
 
     // Adds other to this; result expressed in this quantity's unit (implicit target).
-    public Quantity<U> add(Quantity<U> other) {
-        validateArithmeticOperands(other, null, false);
-        double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
+    public Quantity<U> add(Quantity<?> quantity2) {
+        validateArithmeticOperands(quantity2, null, false);
+        double baseResult = performBaseArithmetic((Quantity<U>) quantity2, ArithmeticOperation.ADD);
         return new Quantity<>(round(this.unit.convertFromBaseUnit(baseResult)), this.unit);
     }
 
@@ -126,9 +126,9 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     // Subtracts other from this; result expressed in this quantity's unit (implicit target).
-    public Quantity<U> subtract(Quantity<U> other) {
-        validateArithmeticOperands(other, null, false);
-        double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+    public Quantity<U> subtract(Quantity<?> quantity2) {
+        validateArithmeticOperands(quantity2, null, false);
+        double baseResult = performBaseArithmetic(quantity2, ArithmeticOperation.SUBTRACT);
         return new Quantity<>(round(this.unit.convertFromBaseUnit(baseResult)), this.unit);
     }
 
@@ -140,9 +140,9 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     // Divides this by other, returning a dimensionless scalar ratio.
-    public double divide(Quantity<U> other) {
-        validateArithmeticOperands(other, null, false);
-        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
+    public double divide(Quantity<?> quantity2) {
+        validateArithmeticOperands(quantity2, null, false);
+        return performBaseArithmetic(quantity2, ArithmeticOperation.DIVIDE);
     }
 
     // Equality compares rounded base-unit values after conversion.
@@ -167,4 +167,6 @@ public final class Quantity<U extends IMeasurable> {
     public String toString() {
         return String.format("Quantity(%.2f, %s)", value, unit.getUnitName());
     }
+
+
 }

@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 public interface IMeasurable {
 	  // Convert a value to base unit representation
     double convertToBaseUnit(double value);
@@ -7,6 +7,8 @@ public interface IMeasurable {
     double convertFromBaseUnit(double baseValue);
 
     String getUnitName();
+    
+    MeasurementType getMeasurementType();
 
     default boolean supportsAddition() {
         return true;
@@ -50,4 +52,27 @@ public interface IMeasurable {
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }
     }
-}
+
+    static IMeasurable fromUnitName(String measurementType, String unitName) {
+
+        switch (measurementType.toUpperCase()) {
+
+            case "LENGTH":
+                return LengthUnit.valueOf(unitName.toUpperCase());
+
+            case "WEIGHT":
+                return WeightUnit.valueOf(unitName.toUpperCase());
+
+            case "VOLUME":
+                return VolumeUnit.valueOf(unitName.toUpperCase());
+
+            case "TEMPERATURE":
+                return TemperatureUnit.valueOf(unitName.toUpperCase());
+
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown measurement type: " + measurementType);
+        }
+    }
+   
+	}
