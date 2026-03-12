@@ -1,0 +1,87 @@
+package com.app.quantitymeasurement.service;
+
+import com.app.quantitymeasurement.domain.IMeasurable;
+import com.app.quantitymeasurement.domain.Quantity;
+import com.app.quantitymeasurement.dto.QuantityDTO;
+import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
+
+public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
+
+	@SuppressWarnings("unused")
+	private final IQuantityMeasurementRepository repository;
+
+	public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
+		this.repository = repository;
+	}
+
+	@Override
+	public boolean compare(QuantityDTO q1, QuantityDTO q2) {
+
+		Quantity<?> quantity1 = convertToQuantity(q1);
+		Quantity<?> quantity2 = convertToQuantity(q2);
+
+		return quantity1.equals(quantity2);
+	}
+
+	private Quantity<?> convertToQuantity(QuantityDTO dto) {
+
+		IMeasurable unit = IMeasurable.fromUnitName(dto.getMeasurementType(), dto.getUnit());
+
+		return new Quantity<>(dto.getValue(), unit);
+	}
+
+	@Override
+	public QuantityDTO convert(QuantityDTO q, String targetUnit) {
+
+	    Quantity<?> quantity = convertToQuantity(q);
+
+	    IMeasurable target =
+	            IMeasurable.fromUnitName(q.getMeasurementType(), targetUnit);
+
+	    Quantity<?> result = quantity.convertTo(target);
+
+	    return new QuantityDTO(
+	            result.getValue(),
+	            result.getUnit().getUnitName(),
+	            q.getMeasurementType()
+	    );
+	}
+	@Override
+	public QuantityDTO add(QuantityDTO q1, QuantityDTO q2) {
+
+	    Quantity<?> quantity1 = convertToQuantity(q1);
+	    Quantity<?> quantity2 = convertToQuantity(q2);
+
+	    Quantity<?> result = quantity1.add(quantity2);
+
+	    return new QuantityDTO(
+	            result.getValue(),
+	            result.getUnit().getUnitName(),
+	            q1.getMeasurementType()
+	    );
+	}
+
+	@Override
+	public QuantityDTO subtract(QuantityDTO q1, QuantityDTO q2) {
+
+	    Quantity<?> quantity1 = convertToQuantity(q1);
+	    Quantity<?> quantity2 = convertToQuantity(q2);
+
+	    Quantity<?> result = quantity1.subtract(quantity2);
+
+	    return new QuantityDTO(
+	            result.getValue(),
+	            result.getUnit().getUnitName(),
+	            q1.getMeasurementType()
+	    );
+	}
+
+	@Override
+	public double divide(QuantityDTO q1, QuantityDTO q2) {
+
+	    Quantity<?> quantity1 = convertToQuantity(q1);
+	    Quantity<?> quantity2 = convertToQuantity(q2);
+
+	    return quantity1.divide(quantity2);
+	}
+}

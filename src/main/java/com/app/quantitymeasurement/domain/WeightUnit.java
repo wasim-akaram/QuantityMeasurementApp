@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 public enum WeightUnit implements IMeasurable {
 
 
@@ -9,27 +9,38 @@ public enum WeightUnit implements IMeasurable {
 
     private final double toKilogramFactor;
 
-    WeightUnit(double toKilogramFactor) {
+    WeightUnit(double toKilogramFactor) 
+    {
         this.toKilogramFactor = toKilogramFactor;
     }
 
     @Override
-    public double convertToBaseUnit(double value) {
+    public double convertToBaseUnit(double value) 
+    {
         return value * toKilogramFactor;
     }
 
     @Override
-    public double convertFromBaseUnit(double baseValue) {
+    public double convertFromBaseUnit(double baseValue) 
+    {
         return baseValue / toKilogramFactor;
     }
 
     @Override
-    public String getUnitName() {
+    public String getUnitName() 
+    {
         return this.name();
     }
 
     
-    public double getConversionFactor() {
+    public double getConversionFactor() 
+    {
         return toKilogramFactor;
+    }
+    
+    @Override
+    public MeasurementType getMeasurementType() 
+    {
+        return MeasurementType.WEIGHT;
     }
 }

@@ -1,8 +1,9 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 
 public enum TemperatureUnit implements IMeasurable {
 
-    CELSIUS {
+    CELSIUS 
+    {
         @Override
         public double convertToBaseUnit(double value) {
             return value + 273.15; 
@@ -32,7 +33,8 @@ public enum TemperatureUnit implements IMeasurable {
         public boolean supportsMultiplication() { return false; }
     },
 
-    FAHRENHEIT {
+    FAHRENHEIT 
+    {
         @Override
         public double convertToBaseUnit(double value) {
             return (value - 32) * 5 / 9 + 273.15; 
@@ -89,4 +91,9 @@ public enum TemperatureUnit implements IMeasurable {
         @Override
         public boolean supportsMultiplication() { return false; }
     };
+	
+	@Override
+	public MeasurementType getMeasurementType() {
+	    return MeasurementType.TEMPERATURE;
+	}
 }

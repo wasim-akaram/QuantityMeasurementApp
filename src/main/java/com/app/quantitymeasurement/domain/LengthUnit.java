@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement;
+package com.app.quantitymeasurement.domain;
 
 public enum LengthUnit implements IMeasurable {
 
@@ -9,28 +9,38 @@ public enum LengthUnit implements IMeasurable {
 
 	    private final double conversionFactor; // base unit = FEET
 
-	    LengthUnit(double conversionFactor) {
+	    LengthUnit(double conversionFactor) 
+	    {
 	        this.conversionFactor = conversionFactor;
 	    }
 
 	    @Override
-	    public double convertToBaseUnit(double value) {
+	    public double convertToBaseUnit(double value) 
+	    {
 	        return value * conversionFactor;
 	    }
 
 	    @Override
-	    public double convertFromBaseUnit(double baseValue) {
+	    public double convertFromBaseUnit(double baseValue) 
+	    {
 	        return baseValue / conversionFactor;
 	    }
 
 	    @Override
-	    public String getUnitName() {
+	    public String getUnitName() 
+	    {
 	        return this.name();
 	    }
 
 	    
-	    public double getConversionFactor() {
+	    public double getConversionFactor() 
+	    {
 	        return conversionFactor;
+	    }
+	    @Override
+	    public MeasurementType getMeasurementType() 
+	    {
+	        return MeasurementType.LENGTH;
 	    }
 
 	}
