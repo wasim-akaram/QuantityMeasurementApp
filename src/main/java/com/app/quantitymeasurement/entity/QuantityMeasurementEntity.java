@@ -10,6 +10,7 @@ public class QuantityMeasurementEntity implements Serializable
     private String operand2;
     private String result;
     private String error;
+    private static final long serialVersionUID = 1L;
 
     public QuantityMeasurementEntity(String operation, String operand1,
                                      String operand2, String result) 

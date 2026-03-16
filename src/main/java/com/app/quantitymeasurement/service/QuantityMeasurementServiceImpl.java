@@ -30,15 +30,17 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		return new Quantity<>(dto.getValue(), unit);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public QuantityDTO convert(QuantityDTO q, String targetUnit) {
 
-	    Quantity<?> quantity = convertToQuantity(q);
+	    Quantity<IMeasurable> quantity =
+	            (Quantity<IMeasurable>) convertToQuantity(q);
 
 	    IMeasurable target =
 	            IMeasurable.fromUnitName(q.getMeasurementType(), targetUnit);
 
-	    Quantity<?> result = quantity.convertTo(target);
+	    Quantity<IMeasurable> result = quantity.convertTo(target);
 
 	    return new QuantityDTO(
 	            result.getValue(),

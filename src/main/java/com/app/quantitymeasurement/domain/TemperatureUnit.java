@@ -2,24 +2,23 @@ package com.app.quantitymeasurement.domain;
 
 public enum TemperatureUnit implements IMeasurable {
 
-    CELSIUS 
-    {
+    CELSIUS {
+
         @Override
         public double convertToBaseUnit(double value) {
-            return value + 273.15; 
+            return value + 273.15;
         }
 
         @Override
         public double convertFromBaseUnit(double baseValue) {
-            return baseValue - 273.15; 
+            return baseValue - 273.15;
         }
 
         @Override
         public String getUnitName() {
-            return "CELSIUS";
+            return "Celsius";
         }
 
-        // Temperature does NOT support arithmetic
         @Override
         public boolean supportsAddition() { return false; }
 
@@ -33,11 +32,11 @@ public enum TemperatureUnit implements IMeasurable {
         public boolean supportsMultiplication() { return false; }
     },
 
-    FAHRENHEIT 
-    {
+    FAHRENHEIT {
+
         @Override
         public double convertToBaseUnit(double value) {
-            return (value - 32) * 5 / 9 + 273.15; 
+            return (value - 32) * 5 / 9 + 273.15;
         }
 
         @Override
@@ -47,7 +46,7 @@ public enum TemperatureUnit implements IMeasurable {
 
         @Override
         public String getUnitName() {
-            return "FAHRENHEIT";
+            return "Fahrenheit";
         }
 
         @Override
@@ -64,6 +63,7 @@ public enum TemperatureUnit implements IMeasurable {
     },
 
     KELVIN {
+
         @Override
         public double convertToBaseUnit(double value) {
             return value;
@@ -76,7 +76,7 @@ public enum TemperatureUnit implements IMeasurable {
 
         @Override
         public String getUnitName() {
-            return "KELVIN";
+            return "Kelvin";
         }
 
         @Override
@@ -91,9 +91,9 @@ public enum TemperatureUnit implements IMeasurable {
         @Override
         public boolean supportsMultiplication() { return false; }
     };
-	
-	@Override
-	public MeasurementType getMeasurementType() {
-	    return MeasurementType.TEMPERATURE;
-	}
+
+    @Override
+    public MeasurementType getMeasurementType() {
+        return MeasurementType.TEMPERATURE;
+    }
 }
