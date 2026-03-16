@@ -1,6 +1,13 @@
 package com.app.quantitymeasurement;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.app.quantitymeasurement.domain.IMeasurable;
+import com.app.quantitymeasurement.domain.Quantity;
+import com.app.quantitymeasurement.domain.LengthUnit;
+import com.app.quantitymeasurement.domain.WeightUnit;
+import com.app.quantitymeasurement.domain.VolumeUnit;
+import com.app.quantitymeasurement.domain.TemperatureUnit;
+
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -999,10 +1006,16 @@ class QuantityMeasurementAppTest
 	    @Nested
 	    class TemperatureUnsupportedOperationTests {
 
-	        @Test
-	        void shouldbeEqual_onAdd_Celsius() {
-	            equals(temp(100.0, TemperatureUnit.CELSIUS).add(temp(50.0, TemperatureUnit.CELSIUS)));
-	        }
+	        
+			
+			@Test
+			void shouldThrowUnsupportedOperationException_onAdd_Celsius() {
+			    assertThrows(
+			        UnsupportedOperationException.class,
+			        () -> temp(100.0, TemperatureUnit.CELSIUS)
+			                .add(temp(50.0, TemperatureUnit.CELSIUS))
+			    );
+			}
 
 	        @Test
 	        void shouldThrowUnsupportedOperationException_onSubtract_Celsius() {
