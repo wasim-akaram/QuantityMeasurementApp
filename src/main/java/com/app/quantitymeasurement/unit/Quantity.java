@@ -1,6 +1,7 @@
-package com.app.quantitymeasurement.domain;
+package com.app.quantitymeasurement.unit;
 
 import java.util.Objects;
+
 
 import java.util.function.DoubleBinaryOperator;
 

@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement.domain;
+package com.app.quantitymeasurement.unit;
 public interface IMeasurable {
 	  // Convert a value to base unit representation
     double convertToBaseUnit(double value);

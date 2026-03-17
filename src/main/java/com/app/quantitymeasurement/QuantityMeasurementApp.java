@@ -1,10 +1,13 @@
-package com.app.quantitymeasurement.app;
+package com.app.quantitymeasurement;
 
 import com.app.quantitymeasurement.controller.QuantityMeasurementController;
+
 import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.app.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.app.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
 import com.app.quantitymeasurement.service.IQuantityMeasurementService;
 import com.app.quantitymeasurement.service.QuantityMeasurementServiceImpl;
+import com.app.quantitymeasurement.util.ApplicationConfig;
 
 
 public class QuantityMeasurementApp 
@@ -17,8 +20,13 @@ public class QuantityMeasurementApp
     	
     	
     	 // create repository
-        IQuantityMeasurementRepository repository = QuantityMeasurementCacheRepository.getInstance();
+    	IQuantityMeasurementRepository repository;
 
+    	if (ApplicationConfig.getRepositoryType().equals("database")) {
+    	    repository = new QuantityMeasurementDatabaseRepository();
+    	} else {
+    	    repository = QuantityMeasurementCacheRepository.getInstance();
+    	}
         // create service
   
         IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
