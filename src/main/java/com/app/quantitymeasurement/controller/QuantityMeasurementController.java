@@ -1,6 +1,7 @@
 package com.app.quantitymeasurement.controller;
 
 import com.app.quantitymeasurement.model.QuantityDTO;
+
 import com.app.quantitymeasurement.service.IQuantityMeasurementService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,36 +15,38 @@ public class QuantityMeasurementController {
     @Autowired
     private IQuantityMeasurementService service;
 
-    // ✅ Compare
+    //  Compare
     @PostMapping("/compare")
     public ResponseEntity<Boolean> compare(@RequestBody CompareRequest request) {
         boolean result = service.compare(request.getQ1(), request.getQ2());
         return ResponseEntity.ok(result);
     }
 
-    // ✅ Add
+    //  Add
     @PostMapping("/add")
     public ResponseEntity<QuantityDTO> add(@RequestBody CompareRequest request) {
         return ResponseEntity.ok(service.add(request.getQ1(), request.getQ2()));
     }
 
-    // ✅ Subtract
+    //  Subtract
     @PostMapping("/subtract")
     public ResponseEntity<QuantityDTO> subtract(@RequestBody CompareRequest request) {
         return ResponseEntity.ok(service.subtract(request.getQ1(), request.getQ2()));
     }
 
-    // ✅ Divide
+    //  Divide
     @PostMapping("/divide")
     public ResponseEntity<Double> divide(@RequestBody CompareRequest request) {
         return ResponseEntity.ok(service.divide(request.getQ1(), request.getQ2()));
     }
 
-    // ✅ Convert
+    //  Convert
     @PostMapping("/convert")
     public ResponseEntity<QuantityDTO> convert(@RequestBody ConvertRequest request) {
         return ResponseEntity.ok(
                 service.convert(request.getQuantity(), request.getTargetUnit())
         );
     }
+    
+    
 }
