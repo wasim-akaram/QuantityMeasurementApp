@@ -1,9 +1,9 @@
-package com.app.quantitymeasurement.repository;
+package com.app.dump;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 
 public class QuantityMeasurementCacheRepository
         implements IQuantityMeasurementRepository 
