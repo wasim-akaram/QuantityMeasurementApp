@@ -1,11 +1,11 @@
 package com.app.quantitymeasurement.service;
 
-import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
-
-import com.app.quantitymeasurement.repository.QuantityMeasurementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.app.quantitymeasurement.model.QuantityDTO;
+
+import com.app.quantitymeasurement.dto.QuantityDTO;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.repository.QuantityMeasurementRepository;
 import com.app.quantitymeasurement.unit.IMeasurable;
 import com.app.quantitymeasurement.unit.Quantity;
 

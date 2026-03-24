@@ -1,6 +1,7 @@
 package com.app.quantitymeasurement.controller;
 
-import com.app.quantitymeasurement.model.QuantityDTO;
+import com.app.quantitymeasurement.dto.QuantityDTO;
+
 import lombok.Data;
 
 @Data
