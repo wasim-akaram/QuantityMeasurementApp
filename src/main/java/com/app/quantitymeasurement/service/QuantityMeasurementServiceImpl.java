@@ -8,12 +8,19 @@ import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.repository.QuantityMeasurementRepository;
 import com.app.quantitymeasurement.unit.IMeasurable;
 import com.app.quantitymeasurement.unit.Quantity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 import lombok.Data;
 
 @Data
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
+	
+	
+	private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementServiceImpl.class);
 
 	@Autowired
 	private QuantityMeasurementRepository repository;

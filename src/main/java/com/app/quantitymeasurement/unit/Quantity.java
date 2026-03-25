@@ -1,244 +1,244 @@
 package com.app.quantitymeasurement.unit;
 
 import java.util.Objects;
-
-
 import java.util.function.DoubleBinaryOperator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Quantity<U extends IMeasurable> {
 
-	private static final double ROUND_FACTOR = 100000.0;
-	private final double value;
-	private final U unit;
+    private static final Logger logger = LoggerFactory.getLogger(Quantity.class);
 
-	private enum ArithmeticOperation {
+    private static final double ROUND_FACTOR = 100000.0;
+    private final double value;
+    private final U unit;
 
-		ADD((a, b) -> a + b), SUBTRACT((a, b) -> a - b), DIVIDE((a, b) -> a / b);
+    private enum ArithmeticOperation {
 
-		private final DoubleBinaryOperator operator;
+        ADD((a, b) -> a + b),
+        SUBTRACT((a, b) -> a - b),
+        DIVIDE((a, b) -> a / b);
 
-		ArithmeticOperation(DoubleBinaryOperator operator) {
-			this.operator = operator;
-		}
+        private final DoubleBinaryOperator operator;
 
-		double compute(double a, double b) {
-			return operator.applyAsDouble(a, b);
-		}
-	}
+        ArithmeticOperation(DoubleBinaryOperator operator) {
+            this.operator = operator;
+        }
 
-	public Quantity(double value, U unit) {
+        double compute(double a, double b) {
+            return operator.applyAsDouble(a, b);
+        }
+    }
 
-		if (unit == null)
-			throw new IllegalArgumentException("Unit cannot be null");
+    public Quantity(double value, U unit) {
 
-		if (Double.isNaN(value) || Double.isInfinite(value))
-			throw new IllegalArgumentException("Invalid numeric value");
+        if (unit == null) {
+            logger.error("Unit is null while creating Quantity");
+            throw new IllegalArgumentException("Unit cannot be null");
+        }
 
-		this.value = value;
-		this.unit = unit;
-	}
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
+            logger.error("Invalid numeric value: {}", value);
+            throw new IllegalArgumentException("Invalid numeric value");
+        }
 
-	public double getValue() {
-		return value;
-	}
+        this.value = value;
+        this.unit = unit;
 
-	public U getUnit() {
-		return unit;
-	}
+        logger.debug("Created Quantity: {} {}", value, unit.getUnitName());
+    }
 
-	private static double round(double value) {
-		return Math.round(value * ROUND_FACTOR) / ROUND_FACTOR;
-	}
+    public double getValue() {
+        return value;
+    }
 
-	private void validateArithmeticOperands(Quantity<?> other, U targetUnit, boolean targetRequired) {
+    public U getUnit() {
+        return unit;
+    }
 
-		if (other == null)
-			throw new IllegalArgumentException("Operand quantity cannot be null");
+    private static double round(double value) {
+        return Math.round(value * ROUND_FACTOR) / ROUND_FACTOR;
+    }
 
-		if (this.unit.getClass() != other.unit.getClass())
-			throw new IllegalArgumentException("Cannot operate on different measurement categories");
+    private void validateArithmeticOperands(Quantity<?> other, U targetUnit, boolean targetRequired) {
 
-		if (targetRequired && targetUnit == null)
-			throw new IllegalArgumentException("Target unit cannot be null");
-	}
+        if (other == null) {
+            logger.error("Operand quantity is null");
+            throw new IllegalArgumentException("Operand quantity cannot be null");
+        }
 
-	private double performBaseArithmetic(Quantity<?> quantity2, ArithmeticOperation operation) {
+        if (this.unit.getClass() != other.unit.getClass()) {
+            logger.error("Different measurement categories: {} vs {}", 
+                this.unit.getClass(), other.unit.getClass());
+            throw new IllegalArgumentException("Cannot operate on different measurement categories");
+        }
 
-		double base1 = this.unit.convertToBaseUnit(this.value);
-		double base2 = quantity2.unit.convertToBaseUnit(quantity2.value);
+        if (targetRequired && targetUnit == null) {
+            logger.error("Target unit is null");
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+    }
 
-		if (operation == ArithmeticOperation.DIVIDE && base2 == 0.0)
-			throw new ArithmeticException("Division by zero");
+    private double performBaseArithmetic(Quantity<?> quantity2, ArithmeticOperation operation) {
 
-		return operation.compute(base1, base2);
-	}
+        double base1 = this.unit.convertToBaseUnit(this.value);
+        double base2 = quantity2.unit.convertToBaseUnit(quantity2.value);
 
-	// Unit conversion
+        if (operation == ArithmeticOperation.DIVIDE && base2 == 0.0) {
+            logger.error("Division by zero attempted");
+            throw new ArithmeticException("Division by zero");
+        }
 
-	public Quantity<U> convertTo(U target) {
+        double result = operation.compute(base1, base2);
 
-		if (target == null)
-			throw new IllegalArgumentException("Target unit cannot be null");
+        logger.debug("Base arithmetic result: {}", result);
 
-		if (this.unit == target)
-			return this;
+        return result;
+    }
 
-		double baseValue = unit.convertToBaseUnit(value);
+    // 🔹 Conversion
+    public Quantity<U> convertTo(U target) {
 
-		double convertedValue = target.convertFromBaseUnit(baseValue);
+        logger.info("Converting {} {} to {}", value, unit.getUnitName(), target);
 
-		// do not round temperature conversions
-		if (!(unit instanceof TemperatureUnit)) {
-			convertedValue = round(convertedValue);
-		}
+        if (target == null) {
+            logger.error("Target unit is null in conversion");
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
 
-		return new Quantity<>(convertedValue, target);
-	}
+        if (this.unit == target)
+            return this;
 
-//	Arithmetic Operation
-//  Add
+        double baseValue = unit.convertToBaseUnit(value);
+        double convertedValue = target.convertFromBaseUnit(baseValue);
 
-	@SuppressWarnings("unchecked")
-	public Quantity<U> add(Quantity<?> quantity2) {
+        if (!(unit instanceof TemperatureUnit)) {
+            convertedValue = round(convertedValue);
+        }
 
-		if (quantity2 == null)
-			throw new IllegalArgumentException("Operand quantity cannot be null");
+        logger.info("Conversion result: {} {}", convertedValue, target.getUnitName());
 
-		unit.validateOperationSupport("addition");
-		quantity2.unit.validateOperationSupport("addition");
+        return new Quantity<>(convertedValue, target);
+    }
 
-		validateArithmeticOperands(quantity2, null, false);
+    // 🔹 Add
+    @SuppressWarnings("unchecked")
+    public Quantity<U> add(Quantity<?> quantity2) {
 
-		double baseResult = performBaseArithmetic(quantity2, ArithmeticOperation.ADD);
+        logger.info("ADD operation: {} {} + {} {}", 
+            this.value, this.unit.getUnitName(),
+            quantity2.value, quantity2.unit.getUnitName());
 
-		return new Quantity<>(round(unit.convertFromBaseUnit(baseResult)), unit);
-	}
+        if (quantity2 == null)
+            throw new IllegalArgumentException("Operand quantity cannot be null");
 
-	public Quantity<U> add(Quantity<U> other, U targetUnit) {
+        unit.validateOperationSupport("addition");
+        quantity2.unit.validateOperationSupport("addition");
 
-		unit.validateOperationSupport("addition");
-		other.unit.validateOperationSupport("addition");
+        validateArithmeticOperands(quantity2, null, false);
 
-		validateArithmeticOperands(other, targetUnit, true);
+        double baseResult = performBaseArithmetic(quantity2, ArithmeticOperation.ADD);
 
-		double baseResult = performBaseArithmetic(other, ArithmeticOperation.ADD);
+        double result = round(unit.convertFromBaseUnit(baseResult));
 
-		return new Quantity<>(round(targetUnit.convertFromBaseUnit(baseResult)), targetUnit);
-	}
+        logger.info("ADD result: {} {}", result, unit.getUnitName());
 
-	public static <U extends IMeasurable> Quantity<U> add(Quantity<U> q1, Quantity<U> q2, U targetUnit) {
+        return new Quantity<>(result, unit);
+    }
 
-		if (q1 == null || q2 == null)
-			throw new IllegalArgumentException("Operand quantity cannot be null");
+    public Quantity<U> subtract(Quantity<?> quantity2) {
 
-		if (targetUnit == null)
-			throw new IllegalArgumentException("Target unit cannot be null");
+        logger.info("SUBTRACT operation: {} {} - {} {}", 
+            this.value, this.unit.getUnitName(),
+            quantity2.value, quantity2.unit.getUnitName());
 
-		q1.unit.validateOperationSupport("addition");
-		q2.unit.validateOperationSupport("addition");
+        if (quantity2 == null)
+            throw new IllegalArgumentException("Operand quantity cannot be null");
 
-		double base1 = q1.unit.convertToBaseUnit(q1.value);
-		double base2 = q2.unit.convertToBaseUnit(q2.value);
+        unit.validateOperationSupport("subtraction");
+        quantity2.unit.validateOperationSupport("subtraction");
 
-		return new Quantity<>(round(targetUnit.convertFromBaseUnit(base1 + base2)), targetUnit);
-	}
+        validateArithmeticOperands(quantity2, null, false);
 
-	// Arithmetic operation
-	// Subtract
+        double baseResult = performBaseArithmetic(quantity2, ArithmeticOperation.SUBTRACT);
 
-	public Quantity<U> subtract(Quantity<?> quantity2) {
+        double result = round(unit.convertFromBaseUnit(baseResult));
 
-		if (quantity2 == null)
-			throw new IllegalArgumentException("Operand quantity cannot be null");
+        logger.info("SUBTRACT result: {} {}", result, unit.getUnitName());
 
-		unit.validateOperationSupport("subtraction");
-		quantity2.unit.validateOperationSupport("subtraction");
+        return new Quantity<>(result, unit);
+    }
 
-		validateArithmeticOperands(quantity2, null, false);
+    // 🔹 Divide
+    public double divide(Quantity<?> quantity2) {
 
-		double baseResult = performBaseArithmetic(quantity2, ArithmeticOperation.SUBTRACT);
+        logger.info("DIVIDE operation: {} {} / {} {}", 
+            this.value, this.unit.getUnitName(),
+            quantity2.value, quantity2.unit.getUnitName());
 
-		return new Quantity<>(round(unit.convertFromBaseUnit(baseResult)), unit);
-	}
+        if (quantity2 == null)
+            throw new IllegalArgumentException("Operand quantity cannot be null");
 
-	public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        unit.validateOperationSupport("division");
+        quantity2.unit.validateOperationSupport("division");
 
-		unit.validateOperationSupport("subtraction");
-		other.unit.validateOperationSupport("subtraction");
+        validateArithmeticOperands(quantity2, null, false);
 
-		validateArithmeticOperands(other, targetUnit, true);
+        double result = performBaseArithmetic(quantity2, ArithmeticOperation.DIVIDE);
 
-		double baseResult = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+        logger.info("DIVIDE result: {}", result);
 
-		return new Quantity<>(round(targetUnit.convertFromBaseUnit(baseResult)), targetUnit);
-	}
+        return result;
+    }
 
-//   Arithmetic operation
-//   Divide
+    // 🔹 Equals
+    @Override
+    public boolean equals(Object obj) {
 
-	public double divide(Quantity<?> quantity2) {
+        logger.debug("Comparing quantities");
 
-		if (quantity2 == null)
-			throw new IllegalArgumentException("Operand quantity cannot be null");
+        if (this == obj)
+            return true;
 
-		unit.validateOperationSupport("division");
-		quantity2.unit.validateOperationSupport("division");
+        if (obj == null || getClass() != obj.getClass())
+            return false;
 
-		validateArithmeticOperands(quantity2, null, false);
+        Quantity<?> other = (Quantity<?>) obj;
 
-		return performBaseArithmetic(quantity2, ArithmeticOperation.DIVIDE);
-	}
+        if (this.unit.getMeasurementType() != other.unit.getMeasurementType())
+            return false;
 
-	// here equality is checked
-	// by overriding equals
+        double base1 = this.unit.convertToBaseUnit(this.value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
 
-	
-	@Override
-	public boolean equals(Object obj) {
+        if (this.unit.getMeasurementType() == MeasurementType.TEMPERATURE) {
+            double EPSILON = 1e-6;
+            return Math.abs(base1 - base2) < EPSILON;
+        }
 
-	    if (this == obj)
-	        return true;
+        base1 = round(base1);
+        base2 = round(base2);
 
-	    if (obj == null || getClass() != obj.getClass())
-	        return false;
+        return Double.compare(base1, base2) == 0;
+    }
 
-	    Quantity<?> other = (Quantity<?>) obj;
+    @Override
+    public int hashCode() {
 
-	    if (this.unit.getMeasurementType() != other.unit.getMeasurementType())
-	        return false;
+        double baseValue = unit.convertToBaseUnit(value);
 
-	    double base1 = this.unit.convertToBaseUnit(this.value);
-	    double base2 = other.unit.convertToBaseUnit(other.value);
+        if (unit instanceof TemperatureUnit) {
+            baseValue = Math.round(baseValue * 1000) / 1000.0;
+        } else {
+            baseValue = round(baseValue);
+        }
 
-	    // Temperature comparison (use tolerance, no rounding)
-	    if (this.unit.getMeasurementType() == MeasurementType.TEMPERATURE) {
-	        double EPSILON = 1e-6;
-	        return Math.abs(base1 - base2) < EPSILON;
-	    }
+        return Objects.hash(unit.getClass().getName(), baseValue);
+    }
 
-	    // Other measurements (use rounding)
-	    base1 = round(base1);
-	    base2 = round(base2);
-
-	    return Double.compare(base1, base2) == 0;
-	}
-
-	@Override
-	public int hashCode() {
-
-		double baseValue = unit.convertToBaseUnit(value);
-
-		if (unit instanceof TemperatureUnit) {
-			baseValue = Math.round(baseValue * 1000) / 1000.0;
-		} else {
-			baseValue = round(baseValue);
-		}
-
-		return Objects.hash(unit.getClass().getName(), baseValue);
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Quantity(%.2f, %s)", value, unit.getUnitName());
-	}
+    @Override
+    public String toString() {
+        return String.format("Quantity(%.2f, %s)", value, unit.getUnitName());
+    }
 }
