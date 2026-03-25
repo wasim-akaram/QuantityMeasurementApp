@@ -29,7 +29,7 @@ public class QuantityMeasurementEntity {
     private Double resultValue;
     private String resultString;
 
-    // ✅ ADD THESE TWO
+
     private String resultUnit;
     private String resultMeasurementType;
 
