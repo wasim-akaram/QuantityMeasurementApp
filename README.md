@@ -248,3 +248,13 @@ Refactors UC12's `add()`, `subtract()`, and `divide()` to eliminate duplicated v
 - All UC12 tests pass without modification
 
 ---
+
+## UC14: Temperature Measurement & Interface Refactoring  
+
+### Description: Integrated Temperature (Celsius, Fahrenheit) while refactoring the IMeasurable interface to handle non-linear math and restricted operations.  
+
+Key Features:  
+
+> Refactored IMeasurable with Default Methods to make arithmetic operations optional.  
+> Used Lambda Expressions to handle the complex Fahrenheit-to-Celsius and Celcius-to-Farenheit formulas.  
+
