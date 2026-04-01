@@ -33,9 +33,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         System.out.println("Google User: " + name + " " + email);
 
-        // Save user if not exists
         userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(new User(null, name, email)));
+        .orElseGet(() -> {
+            User newUser = new User();
+            newUser.setName(name);
+            newUser.setEmail(email);
+
+            // 🔥 OAuth users don't have password
+            newUser.setPassword("GOOGLE_USER");  
+
+            newUser.setPhoneNumber(null);
+
+            return userRepository.save(newUser);
+        });
 
        
         System.out.println("jwtUtil object: " + jwtUtil);
